@@ -1,37 +1,31 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- */
-
-import { NewAppScreen } from '@react-native/new-app-screen';
-import { StatusBar, StyleSheet, useColorScheme, View } from 'react-native';
-import {
-  SafeAreaProvider,
-  useSafeAreaInsets,
-} from 'react-native-safe-area-context';
+import {useEffect, useState} from 'react';
+import {BackHandler, StyleSheet, Text, View} from 'react-native';
 
 function App() {
-  const isDarkMode = useColorScheme() === 'dark';
+  const [backCount, setBackCount] = useState(0);
 
-  return (
-    <SafeAreaProvider>
-      <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
-      <AppContent />
-    </SafeAreaProvider>
-  );
-}
+  useEffect(() => {
+    const subscription = BackHandler.addEventListener(
+      'hardwareBackPress',
+      () => {
+        console.log('hardwareBackPress received');
+        setBackCount(count => count + 1);
+        return true;
+      },
+    );
 
-function AppContent() {
-  const safeAreaInsets = useSafeAreaInsets();
+    return () => subscription.remove();
+  }, []);
 
   return (
     <View style={styles.container}>
-      <NewAppScreen
-        templateFileName="App.tsx"
-        safeAreaInsets={safeAreaInsets}
-      />
+      <Text style={styles.title}>Android BackHandler reproduction</Text>
+      <Text testID="listener-status" style={styles.status}>
+        Listener ready
+      </Text>
+      <Text testID="back-count" style={styles.count}>
+        Back count: {backCount}
+      </Text>
     </View>
   );
 }
@@ -39,6 +33,21 @@ function AppContent() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 16,
+    padding: 24,
+  },
+  title: {
+    fontSize: 22,
+    fontWeight: '600',
+  },
+  status: {
+    color: '#007A33',
+    fontSize: 18,
+  },
+  count: {
+    fontSize: 24,
   },
 });
 
