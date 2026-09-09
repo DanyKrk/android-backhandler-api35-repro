@@ -40,6 +40,15 @@ The listener logs `hardwareBackPress received`, increments the displayed count, 
 
 The predictive-Back gesture was not tested.
 
-## Earlier control result
+## Control results
 
-On the same Pixel 8 Pro emulator / API 35 with React Native 0.85.3 and target SDK 36: the app fails with the flag `true`, and passes (count increases; app remains visible) after changing only the flag to `false`.
+The following results were confirmed manually on the same Pixel 8 Pro emulator running Android API 35 with target SDK 36:
+
+| React Native | `android:enableOnBackInvokedCallback` | Result |
+| --- | --- | --- |
+| 0.87.1 | `true` | `hardwareBackPress` is not emitted; the count remains 0; Android returns to the home screen |
+| 0.87.1 | `false` | `hardwareBackPress` is emitted; the count increases; the app remains visible |
+| 0.85.3 | `true` | `hardwareBackPress` is not emitted; the count remains 0; Android returns to the home screen |
+| 0.85.3 | `false` | `hardwareBackPress` is emitted; the count increases; the app remains visible |
+
+Within each React Native version, only `android:enableOnBackInvokedCallback` was changed between the two runs. The checked-in reproducer keeps the flag set to `true` to demonstrate the failing configuration.
